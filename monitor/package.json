@@ -1,0 +1,16 @@
+{
+  "name": "agent-monitor-starter",
+  "version": "1.0.0",
+  "description": "Starter implementation for AI agent activity monitoring",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": ["ai", "security", "monitoring", "agents"],
+  "author": "Varritech",
+  "license": "MIT",
+  "dependencies": {
+    "winston": "^3.11.0"
+  }
+}

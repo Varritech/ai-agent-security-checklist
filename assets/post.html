@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Varritech - AI Agent Security</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 1200px;
+      height: 1200px;
+      overflow: hidden;
+      font-family: 'Chakra Petch', sans-serif;
+      background: #0a0020;
+      position: relative;
+    }
+
+    /* Background gradient blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+    }
+
+    .blob-1 {
+      width: 600px;
+      height: 600px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      top: -200px;
+      left: -200px;
+    }
+
+    .blob-2 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      bottom: -150px;
+      right: -150px;
+    }
+
+    .blob-3 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      top: 50%;
+      left: 60%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Scanlines overlay */
+    .scanlines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Vignette */
+    .vignette {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 0, 32, 0.8) 100%);
+      pointer-events: none;
+      z-index: 11;
+    }
+
+    /* Bauhaus geometric shapes */
+    .bauhaus {
+      position: absolute;
+      opacity: 0.12;
+      z-index: 5;
+    }
+
+    .bauhaus-circle {
+      width: 200px;
+      height: 200px;
+      border: 3px solid #d4ff00;
+      border-radius: 50%;
+      top: 100px;
+      right: 100px;
+    }
+
+    .bauhaus-rect {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(45deg, #d4ff00, #764ba2);
+      bottom: 200px;
+      left: 50px;
+      transform: rotate(15deg);
+    }
+
+    .bauhaus-triangle {
+      width: 0;
+      height: 0;
+      border-left: 100px solid transparent;
+      border-right: 100px solid transparent;
+      border-bottom: 173px solid rgba(212, 255, 0, 0.15);
+      top: 400px;
+      left: 900px;
+      transform: rotate(-30deg);
+    }
+
+    .bauhaus-line-1 {
+      width: 300px;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #d4ff00);
+      top: 250px;
+      left: 100px;
+      transform: rotate(-45deg);
+    }
+
+    .bauhaus-line-2 {
+      width: 250px;
+      height: 4px;
+      background: linear-gradient(90deg, #f093fb, #4facfe);
+      bottom: 350px;
+      right: 150px;
+      transform: rotate(30deg);
+    }
+
+    /* Main content container */
+    .container {
+      position: relative;
+      z-index: 20;
+      padding: 80px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Logo */
+    .logo-container {
+      position: absolute;
+      top: 50px;
+      right: 80px;
+      width: 120px;
+      height: 120px;
+    }
+
+    .logo {
+      width: 100%;
+      height: 100%;
+      background-image: url('varritech-logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: invert(1) brightness(2);
+    }
+
+    /* Hook - strikethrough + chartreuse pivot */
+    .hook {
+      margin-top: 60px;
+    }
+
+    .hook-line-1 {
+      font-size: 56px;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: line-through;
+      text-decoration-color: #ff4444;
+      text-decoration-thickness: 4px;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .hook-line-2 {
+      font-size: 56px;
+      font-weight: 700;
+      color: #d4ff00;
+      letter-spacing: -1px;
+    }
+
+    /* Stat pills */
+    .stats {
+      display: flex;
+      gap: 24px;
+      margin: 60px 0;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 24px 32px;
+      flex: 1;
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: #d4ff00;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    /* Glassmorphism diff card */
+    .diff-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 40px;
+      margin: 40px 0;
+    }
+
+    .diff-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .diff-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .diff-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .diff-icon {
+      font-size: 24px;
+      margin-right: 16px;
+      min-width: 32px;
+    }
+
+    .diff-text {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    .diff-text strong {
+      color: #d4ff00;
+      font-weight: 600;
+    }
+
+    /* CTA */
+    .cta-container {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #d4ff00 0%, #a8e000 100%);
+      color: #0a0020;
+      font-size: 28px;
+      font-weight: 700;
+      padding: 24px 64px;
+      border-radius: 100px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 32px rgba(212, 255, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    /* Tagline */
+    .tagline {
+      position: absolute;
+      bottom: 50px;
+      left: 80px;
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- Scanlines and vignette -->
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <!-- Bauhaus shapes -->
+  <div class="bauhaus bauhaus-circle"></div>
+  <div class="bauhaus bauhaus-rect"></div>
+  <div class="bauhaus bauhaus-triangle"></div>
+  <div class="bauhaus bauhaus-line-1"></div>
+  <div class="bauhaus bauhaus-line-2"></div>
+
+  <!-- Logo -->
+  <div class="logo-container">
+    <div class="logo"></div>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <div class="hook">
+      <div class="hook-line-1">~~Your AI agents are secure~~</div>
+      <div class="hook-line-2">Your AI agents are a security nightmare</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-pill">
+        <div class="stat-number">331 pts</div>
+        <div class="stat-label">Hacker News trending<br>(OpenAI RubyGems attack)</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-number">3 incidents</div>
+        <div class="stat-label">Claude unauthorized access<br>(Anthropic Sep 2026)</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-number">$47K</div>
+        <div class="stat-label">Avg. cost of rogue agent<br>infrastructure mistakes</div>
+      </div>
+    </div>
+
+    <div class="diff-card">
+      <div class="diff-title">What You're Missing</div>
+      <div class="diff-item">
+        <div class="diff-icon">⚠️</div>
+        <div class="diff-text"><strong>No isolation boundaries</strong> — Agents running with your credentials in your environment</div>
+      </div>
+      <div class="diff-item">
+        <div class="diff-icon">👁️</div>
+        <div class="diff-text"><strong>Zero observability</strong> — Can't see what actions your agents are taking</div>
+      </div>
+      <div class="diff-item">
+        <div class="diff-icon">🚨</div>
+        <div class="diff-text"><strong>No fail-safes</strong> — No circuit breakers when agents go rogue</div>
+      </div>
+      <div class="diff-item">
+        <div class="diff-icon">🔒</div>
+        <div class="diff-text"><strong>Unchecked permissions</strong> — Full access instead of minimal required</div>
+      </div>
+    </div>
+
+    <div class="cta-container">
+      <div class="cta-button">Fork The Repo</div>
+    </div>
+
+    <div class="tagline">Bold ideas wait for no one</div>
+  </div>
+</body>
+</html>
